@@ -1,6 +1,6 @@
 package fpscala.monad
 
-import fpscala.applicative.Applicative
+import fpscala.applicative.{Applicative, ApplicativeOps, Apply}
 
 trait Monad[M[_]] { self: Applicative[M] =>
   def ret[A](a: => A): M[A] = pure(a)
@@ -27,17 +27,19 @@ trait MonadOps[A, M[_]] {
     (implicit m: Monad[M]) = m.bind(self, f)
 }
 
-trait MonadRetOps[A, M[_]] {
+trait MonadRetOps[A] {
   def self: A
   final def ret[M[_]](implicit m: Monad[M]): M[A] = m.ret(self)
 }
 
 object MonadOps {
-  implicit def toMonadOps[A, M[_]](m: M[A]) = new MonadOps[A, M] {
+  implicit def toMonadOps[A, M[_]](m: M[A]) =
+    new MonadOps[A, M] with Apply[A, M] {
     def self = m
   }
 
-  implicit def toMonadRetOps[A, M[_]](a: A) = new MonadRetOps[A, M] {
+  implicit def toMonadRetOps[A](a: A) =
+    new MonadRetOps[A] with ApplicativeOps[A] {
     def self = a
   }
 }
