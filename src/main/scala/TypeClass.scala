@@ -1,24 +1,37 @@
 package fpscala.typeclass
 
-trait Ordered[A] {
-  def <(lhs: A, rhs: A): Boolean
-  def eq(lhs: A, rhs: A): Boolean
+object Order extends Enumeration {
+  val LT, EQ, GT = Value
+}
+
+trait Ordered[A, B] {
+  def compare(lhs: A, rhs: B): Order.Value
+  def <(lhs: A, rhs: B) = compare(lhs, rhs) == Order.LT
+  def >(lhs: A, rhs: B) = compare(lhs, rhs) == Order.GT
+  def eq(lhs: A, rhs: B) = compare(lhs, rhs) == Order.EQ
 }
 
 object Ordered {
-  implicit def orderedInt = new Ordered[Int] {
-    def <(lhs: Int, rhs: Int) = lhs < rhs
-    def eq(lhs: Int, rhs: Int) = lhs == rhs
+  import Order._
+  implicit def orderedInt = new Ordered[Int, Int] {
+    def compare(lhs: Int, rhs: Int) =
+      if (lhs < rhs) LT
+      else if (lhs == rhs) EQ
+      else GT
   }
 
-  implicit def orderedDouble = new Ordered[Double] {
-    def <(lhs: Double, rhs: Double) = lhs < rhs
-    def eq(lhs: Double, rhs: Double) = lhs == rhs
+  implicit def orderedDouble = new Ordered[Double, Double] {
+    def compare(lhs: Double, rhs: Double) =
+      if (lhs < rhs) LT
+      else if (lhs == rhs) EQ
+      else GT
   }
 
-  implicit def orderedString = new Ordered[String] {
-    def <(lhs: String, rhs: String) = lhs < rhs
-    def eq(lhs: String, rhs: String) = lhs == rhs
+  implicit def orderedString = new Ordered[String, String] {
+    def compare(lhs: String, rhs: String) =
+      if (lhs < rhs) LT
+      else if (lhs == rhs) EQ
+      else GT
   }
 }
 
@@ -34,11 +47,14 @@ object Tree {
 
   def maxOption[A](t: Tree[A]): Option[A] = t match {
     case Empty => None
-    case Node(l, v, r) => Some(max(r, v))
+    // We can just use Node(_, v, r) => Some(max(r, v)),
+    // but let's show the cool pattern matching anyway!
+    case Node(_, v, Empty) => Some(v)
+    case Node(_, _, r) => maxOption(r)
   }
 
   def insert[A](x: A, t: Tree[A])
-    (implicit order: Ordered[A]): Tree[A] = t match {
+    (implicit order: Ordered[A, A]): Tree[A] = t match {
     case Empty => Node(Empty, x, Empty)
     case Node(l, v, r) =>
       if (order.<(v, x)) Node(l, v, insert(x, r))
@@ -53,11 +69,34 @@ object Example {
 }
 
 object StringOrderExample {
-  implicit def orderedCapString = new Ordered[String] {
-    def <(lhs: String, rhs: String) = lhs.capitalize < rhs.capitalize
-    def eq(lhs: String, rhs: String) = lhs.capitalize == rhs.capitalize
+  implicit def orderedCapString = new Ordered[String, String] {
+    def compare(lhs: String, rhs: String) = {
+      val l = lhs.capitalize
+      val r = rhs.capitalize
+      if (l < r) Order.LT
+      else if (l == r) Order.EQ
+      else Order.GT
+    }
   }
 
   val t = Tree.insert("a", Tree.insert("A", Empty))
   // would be Node(Empty, "A", Empty)
+}
+
+sealed trait Nat
+case object Z extends Nat
+case class S(n: Nat) extends Nat
+
+object NatExample {
+  def compareNat(l: Nat, r: Nat): Order.Value =
+    (l, r) match {
+      case (Z, Z) => Order.EQ
+      case (Z, _) => Order.LT
+      case (_, Z) => Order.GT
+      case (S(x), S(y)) => compareNat(x, y)
+    }
+
+  implicit def orderedNat[M <: Nat, N <: Nat] = new Ordered[M, N] {
+    def compare(lhs: M, rhs: N) = compareNat(lhs, rhs)
+  }
 }
