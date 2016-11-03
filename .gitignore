@@ -2,3 +2,9 @@
 *.class
 *.hi
 *.o
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.tex
