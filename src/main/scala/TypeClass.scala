@@ -75,6 +75,10 @@ case object Z extends Nat
 case class S(n: Nat) extends Nat
 
 object NatExample {
+  implicit def orderedNat[M <: Nat, N <: Nat] = new Ordered[M, N] {
+    def compare(lhs: M, rhs: N) = compareNat(lhs, rhs)
+  }
+
   def compareNat(l: Nat, r: Nat): Order.Value =
     (l, r) match {
       case (Z, Z) => Order.EQ
@@ -82,8 +86,4 @@ object NatExample {
       case (_, Z) => Order.GT
       case (S(x), S(y)) => compareNat(x, y)
     }
-
-  implicit def orderedNat = new Ordered[Nat, Nat] {
-    def compare(lhs: Nat, rhs: Nat) = compareNat(lhs, rhs)
-  }
 }

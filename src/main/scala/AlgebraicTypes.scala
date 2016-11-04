@@ -32,8 +32,8 @@ case object Z extends Nat
 case class S(pred: Nat) extends Nat
 
 object NatExample {
-  val nat_ex1 = Z
-  val nat_ex2 = S(S(Z))
+  val nat_ex1: Nat = Z
+  val nat_ex2: S = S(S(Z))
   val nat_ex3 = nat_ex2.pred
   def plus(m: Nat, n: Nat): Nat = m match {
     case Z => n
