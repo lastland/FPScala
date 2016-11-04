@@ -1,4 +1,5 @@
 package fpscala.monoid
+import scala.language.implicitConversions
 
 trait Monoid[M] {
   def mempty: M

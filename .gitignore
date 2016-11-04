@@ -8,3 +8,5 @@
 *.toc
 *.synctex.gz
 *.tex
+.ensime
+.ensime_cache

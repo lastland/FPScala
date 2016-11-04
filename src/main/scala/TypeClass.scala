@@ -40,19 +40,6 @@ case object Empty extends Tree[Nothing]
 case class Node[+A](l: Tree[A], x: A, r: Tree[A]) extends Tree[A]
 
 object Tree {
-  def max[A](t: Tree[A], default: A): A = t match {
-    case Empty => default
-    case Node(l, v, r) => max(r, v)
-  }
-
-  def maxOption[A](t: Tree[A]): Option[A] = t match {
-    case Empty => None
-    // We can just use Node(_, v, r) => Some(max(r, v)),
-    // but let's show the cool pattern matching anyway!
-    case Node(_, v, Empty) => Some(v)
-    case Node(_, _, r) => maxOption(r)
-  }
-
   def insert[A](x: A, t: Tree[A])
     (implicit order: Ordered[A, A]): Tree[A] = t match {
     case Empty => Node(Empty, x, Empty)
@@ -96,7 +83,7 @@ object NatExample {
       case (S(x), S(y)) => compareNat(x, y)
     }
 
-  implicit def orderedNat[M <: Nat, N <: Nat] = new Ordered[M, N] {
-    def compare(lhs: M, rhs: N) = compareNat(lhs, rhs)
+  implicit def orderedNat = new Ordered[Nat, Nat] {
+    def compare(lhs: Nat, rhs: Nat) = compareNat(lhs, rhs)
   }
 }

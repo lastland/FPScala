@@ -1,4 +1,6 @@
 package fpscala.monad
+import scala.language.higherKinds
+import scala.language.implicitConversions
 
 import fpscala.applicative.{Applicative, ApplicativeOps, Apply}
 
@@ -8,13 +10,13 @@ trait Monad[M[_]] { self: Applicative[M] =>
 }
 
 object Monad {
-  implicit def listMonad[A] = new Monad[List]
+  implicit def listMonad = new Monad[List]
       with Applicative.ListApplicative {
     def bind[A, B](a: => List[A], f: A => List[B]) =
       a.flatMap(f)
   }
 
-  implicit def optionMonad[A] = new Monad[Option]
+  implicit def optionMonad = new Monad[Option]
       with Applicative.OptionApplicative {
     def bind[A, B](a: => Option[A], f: A => Option[B]) =
       a.flatMap(f)

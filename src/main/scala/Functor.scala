@@ -1,4 +1,11 @@
 package fpscala.functor
+import scala.language.higherKinds
+import scala.language.implicitConversions
+
+/*
+ class Functor f where
+   fmap :: (a -> b) -> f a -> f b
+ */
 
 trait Functor[F[_]] {
   def fmap[A, B](f: A => B)(a: F[A]): F[B]
