@@ -13,21 +13,21 @@ trait Ordered[A, B] {
 
 object Ordered {
   import Order._
-  implicit def orderedInt = new Ordered[Int, Int] {
+  implicit val orderedInt = new Ordered[Int, Int] {
     def compare(lhs: Int, rhs: Int) =
       if (lhs < rhs) LT
       else if (lhs == rhs) EQ
       else GT
   }
 
-  implicit def orderedDouble = new Ordered[Double, Double] {
+  implicit val orderedDouble = new Ordered[Double, Double] {
     def compare(lhs: Double, rhs: Double) =
       if (lhs < rhs) LT
       else if (lhs == rhs) EQ
       else GT
   }
 
-  implicit def orderedString = new Ordered[String, String] {
+  implicit val orderedString = new Ordered[String, String] {
     def compare(lhs: String, rhs: String) =
       if (lhs < rhs) LT
       else if (lhs == rhs) EQ
@@ -56,7 +56,7 @@ object Example {
 }
 
 object StringOrderExample {
-  implicit def orderedCapString = new Ordered[String, String] {
+  implicit val orderedCapString = new Ordered[String, String] {
     def compare(lhs: String, rhs: String) = {
       val l = lhs.capitalize
       val r = rhs.capitalize

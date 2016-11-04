@@ -13,6 +13,7 @@
    - Functors:
 
       http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
+
 1. Read the following program (a binary search tree) written in Haskell, and think about how you would implement it in a statically typed object-oriented programming language, for example, Java:
   #+BEGIN_SRC Haskell
   data Tree a = Empty | Node (Tree a) a (Tree a)
@@ -28,6 +29,7 @@
   Notice that we don't really need algebraic types to implement this example in Java. What's the problem if we don't use algebraic types here?
 
   You don't need to actually implement this program in Java, but feel free to send me a copy of your code if you did.
+
 2. You may have used subtype polymorphism to implement the above example in Java,
    because most comparable stuff in Java would implement the =Comparable= interface.
    Now suppose we have a =Nat= data type from a third-party library, which,

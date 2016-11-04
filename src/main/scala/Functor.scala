@@ -12,17 +12,17 @@ trait Functor[F[_]] {
 }
 
 object Functor {
-  implicit def listFunctor = new Functor[List] {
+  implicit val listFunctor = new Functor[List] {
     def fmap[A, B](f: A => B)(a: List[A]) = a.map(f)
   }
 
-  implicit def optionFunctor = new Functor[Option] {
+  implicit val optionFunctor = new Functor[Option] {
     def fmap[A, B](f: A => B)(a: Option[A]) = a.map(f)
   }
 
   type FI[A] = Function1[Int, A]
 
-  implicit def functionFunctor = new Functor[FI] {
+  implicit val functionFunctor = new Functor[FI] {
     def fmap[A, B](f: A => B)(a: FI[A]) = f.compose(a)
   }
 }
@@ -50,11 +50,15 @@ object Example {
   val option_ex1 = Option(1) fmap (_ + 41)
   val option_ex2 = (None: Option[Int]) fmap (_ + 41)
 
+  val function_ex1 = (((_: Int) + 1): Functor.FI[Int]) fmap (_ * 10)
+  val function_ex2 = (((x: Int) => Some(x)): Functor.FI[Option[Int]]) fmap (
+    _ fmap (_ + 41))
+
   def compose[A, B](f: A => B)(x: Int => A): Int => B =
     (x: Functor.FI[A]) fmap f
 
-  val function_ex1 = compose ((x: Int) => x * 10) (_ + 1)
-  val function_ex2 = compose ((x: Option[Int]) => x fmap (_ + 41)) (Some(_))
+  val function_ex3 = compose ((x: Int) => x * 10) (_ + 1)
+  val function_ex4 = compose ((x: Option[Int]) => x fmap (_ + 41)) (Some(_))
 
   val list_curry_ex1 = List(1, 2, 3) fmap ((_: Int) * (_: Int)).curried
   val list_curry_ex2 = list_curry_ex1 fmap (_(2))
